@@ -84,7 +84,7 @@
 
 \section*{Introduction}
 
-Artificial Neural Networks (ANNs) are a large and rapidly developing area of machine learning research.  More advanced implementations involve complex network topologies capable of performing considerable feats of generalization and reasoning.  However, since these networks are composed of individual building blocks, known as artificial neurons, it crucial to first understand these components.  Furthermore, these individual neurons can perform useful tasks, such as classification, on their own.  In this module we explore two such components, the Perceptron and the Adaline.
+Artificial Neural Networks (ANNs) are a large and rapidly developing area of machine learning research.  More advanced implementations involve complex network topologies capable of performing considerable feats of generalization and reasoning.  However, since these networks are composed of individual building blocks, known as artificial neurons, it is crucial to first understand these components.  Furthermore, these individual neurons can perform useful tasks, such as classification, on their own.  In this module we explore two such components, the Perceptron and the Adaline.
 
 \section*{ANN Basics}
 
@@ -106,14 +106,10 @@ From a purely mathematical perspective, a Perceptron is a self-contained unit th
 net = x \cdot w + \theta ,
 \end{equation}
 
-where $\theta$ is the threshold weight, an additional weight that acts independently of an input.  $\theta$ can be thought of as defining the threshold at which the neuron will activate.  After the weighted sum is calculated, it is passed through an activation function $F(s)$ to obtain the output of the Perceptron.  Thus, the output $o$ of the Perceptron can be defined as
+where $\theta$ is the threshold weight, an additional weight that acts independently of an input.  $\theta$ can be thought of as defining the threshold at which the neuron will activate.  After the weighted sum is calculated, it is passed through an activation function $F(s)$ to obtain the output of the Perceptron.  Thus, the output $y$ of the Perceptron can be defined as
 
 \begin{equation}
-o(x) = F(x \cdot w + \theta )
-\end{equation}
-
-\begin{equation}
-o(x) = F(net) .
+y(x) = F(x \cdot w + \theta ) = F(net)
 \end{equation}
 
 Note that $net$ is a mostly superfluous intermediary for now, but it becomes useful in defining partial derivatives later.  In the case of the Perceptron, $F(s)$ is a slight modification of the sign function, specifically
@@ -128,7 +124,7 @@ F(s) =
 
 \subsubsection*{Training}
 
-Training is the process by which the weights of the Perceptron are updated to more accurately detect a pattern.  This is accomplished with a set of training data, with each \textit{training example} $d\in(z, l)$.  $z\in\mathbb{R}^{n}$ is the input fed into the Perceptron, and $l$ is the \textit{label} of the training example.  The label is the expected output of the Perceptron, given $z$ as an input.
+Training is the process by which the weights of the Perceptron are updated to more accurately detect a pattern.  This is accomplished with a set of training data $D$, where $D = \{ (X_1,l_1),(X_2,l_2),...,(X_n,l_n) \}$.  Here $X$ is a vector of input values fed to the Perceptron, and $l$ is the \textit{label} of the training example.  The label is the expected output of the Perceptron, given $X$ as an input.  From this perspective, a single training example is notated as $d \in D$.
 
 Learning is accomplished with a simple algorithm.  Each element in a set of data is classified by the Perceptron, and for each incorrect classification, the weights are updated according to the rule:
 
