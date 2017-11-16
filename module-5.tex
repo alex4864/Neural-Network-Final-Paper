@@ -129,10 +129,10 @@ Training is the process by which the weights of the Perceptron are updated to mo
 Learning is accomplished with a simple algorithm.  Each element in a set of data is classified by the Perceptron, and for each incorrect classification, the weights are updated according to the rule:
 
 \begin{equation}
-w_j \leftarrow w_j + (l - o(z)) \cdot z_j \cdot \gamma
+w_j \leftarrow w_j + (l - y(X)) \cdot X_j \cdot \gamma
 \end{equation}
 
-This defines the update rule for a given element $d$ in the training set of data, for a specific weight $w_j$, and its associated input from the training example, $z_j$.  $\gamma$ is the learning rate, usually a very small value used to moderate the learning process.  This rule would be repeated over each weight and over each training element to achieve desirable results.
+This defines the update rule for a given element $d$ in the training set of data, for a specific weight $w_j$, and its associated input from the training example, $X_j$.  $\gamma$ is the learning rate, usually a very small value used to moderate the learning process.  This rule would be repeated over each weight and over each training element to achieve desirable results.
 
 \subsection*{Implementation}
 
@@ -186,7 +186,7 @@ While the Perceptron model is useful for binary sets of data, where the label ap
 A number of options exist for a continuously valued activation function.  A simple approach is to use a linear activation function, which is to say, not modify the output in any way.  With this activation function, the output of the neuron would be:
 
 \begin{equation}
-o = x \cdot w + \theta
+y = x \cdot w + \theta
 \end{equation}
 
 While this method is simple, it is less valuable for classification tasks, since with classification we only deal with points having discrete values of 1 and -1.  In these cases, it is useful to have a function bounded at -1 and 1.  A class of functions known as sigmoids fit this description nicely, so we use one such function, tanh, which is defined as follows.
@@ -200,10 +200,10 @@ While this method is simple, it is less valuable for classification tasks, since
 Another important development is that the Adaline model uses gradient descent to minimize error and learn the training set of data.  Gradient descent makes use of the continuous activation function, in this case  $\sigma$, as defined above.
 
 \begin{equation}
-E_i(\theta ,w) = \frac{1}{2}(\sigma (\theta + w \cdot x_i) - l)^2
+E_i(\theta ,w) = \frac{1}{2}(\sigma (\theta + w \cdot X_i) - l)^2
 \end{equation}
 
-This defines the error $E_i$ for a single set of inputs $x_i$, where $l$ represents the label, or desired output associated with $x_i$.  Furthermore, the total error of the neural network over the entire training set can be found by summing each individual error.
+This defines the error $E_i$ for a single set of inputs $X_i$, where $l$ represents the label, or desired output associated with $X_i$.  Furthermore, the total error of the neural network over the entire training set can be found by summing each individual error.
 
 \begin{equation}
 E = \sum_{i}^{N} E_i(\theta ,w)
@@ -213,12 +213,12 @@ Thus, our problem of training weights can be defined as an optimization problem,
 
 \begin{equation}
 \begin{split}
-\frac{\partial E_i}{\partial w_j} & = \frac{\partial }{\partial w_j} \Big[\frac{1}{2}(\sigma (\theta + w \cdot x_i) - l_i)^2 \Big] \\
- & = (\sigma (\theta + w \cdot x_i) - l_i)(\sigma '(\theta + w \cdot x_i)) \cdot x_{i_j}
+\frac{\partial E_i}{\partial w_j} & = \frac{\partial }{\partial w_j} \Big[\frac{1}{2}(\sigma (\theta + w \cdot X_i) - l_i)^2 \Big] \\
+ & = (\sigma (\theta + w \cdot X_i) - l_i)(\sigma '(\theta + w \cdot X_i)) \cdot X_{i_j}
 \end{split}
 \end{equation}
 
-Observe that the notation ${x_{i_j}}$ refers to the j-th element of the vector $x_i$, i.e. the input corresponding with the weight $w_j$.  Using this definition, we can then obtain a weight adjustment to use in our algorithm.
+Observe that the notation ${X_{i_j}}$ refers to the j-th element of the vector $X_i$, i.e. the input corresponding with the weight $w_j$.  Using this definition, we can then obtain a weight adjustment to use in our algorithm.
 
 \begin{equation}
 \delta = (l - \sigma (\theta + w \cdot x_i))(\sigma '(\theta + w \cdot x_i))
@@ -227,7 +227,7 @@ Observe that the notation ${x_{i_j}}$ refers to the j-th element of the vector $
 Thus, our update rule becomes:
 
 \begin{equation}
-w_i \leftarrow w_i + \gamma \cdot \delta \cdot x_{i_j}
+w_i \leftarrow w_i + \gamma \cdot \delta \cdot X_{i_j}
 \end{equation}
 
 With this update rule, we design an algorithm to train our weights to a particular set of training data.
@@ -242,7 +242,7 @@ This process can be repeated multiple times over the same training data to train
 
 \subsubsection*{Advantages}
 
-As discussed above, one of the major advantages of Adalines over Perceptrons is the ability to process continously valued data, as opposed to sets labeled at -1 and 1.  Another major advantage of Adalines is robustness when faced with messy data.  In such sets, where linear separation is not possible, a useful if not completely accurate classification can be performed.  The diagram below demonstrates an Adaline attempting to classify one such messy set.
+As discussed above, one of the major advantages of Adalines over Perceptrons is the ability to process continuously valued data, as opposed to sets labeled at -1 and 1.  Another major advantage of Adalines is robustness when faced with messy data.  In such sets, where linear separation is not possible, a useful if not completely accurate classification can be performed.  The diagram below demonstrates an Adaline attempting to classify one such messy set.
 
 \includegraphics[scale = .75]{adaline_messy}
 
