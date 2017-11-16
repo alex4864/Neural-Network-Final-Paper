@@ -1,0 +1,561 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Modifications:
+% This file was modified by Jarod Hart (jvhart@ku.edu)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[a4paper, 11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{hyperref}
+
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{sources.bib}
+
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbf{#1.}} % Change the square brackets for each bibliography item from '[1]' to '1.'
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+% The next section is creating a command to make the title/author/date section of the paper.  Do not make modifications to this section initially.  Once you have spent some more time working with LaTeX, you can modify this to control the way your title/author/date are displayed.
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+\vspace{50pt} % Some vertical space between the title and author name
+
+{\large\@author} % Author name
+\\\@date % Date
+
+\vspace{40pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+% Enter the title of your paper here.
+
+\title{\textbf{Applications of Neural Networks}} % Title
+
+% Enter author's name here.
+
+\author{\textsc{Alex Shadley} % Author
+\\{\textit{University of Kansas}}} % Institution
+
+\date{\today} % Date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\section*{Introduction}
+
+Artificial Neural Networks (ANNs) are a large and rapidly developing area of machine learning research.  More advanced implementations involve complex network topologies capable of performing considerable feats of generalization and reasoning.  However, since these networks are composed of individual building blocks, known as artificial neurons, it crucial to first understand these components.  Furthermore, these individual neurons can perform useful tasks, such as classification, on their own.  In this module we explore two such components, the Perceptron and the Adaline.
+
+\section*{ANN Basics}
+
+\subsection*{Training Data}
+
+As with most classes of machine learning, working with artificial neural networks requires large sets of well defined data in order to produce satisfactory results.  In the interest of maintaining a fully controlled environment when dealing with the theoretical components of ANNs, in this module we use a simple algorithm to generate all training data.  The algorithm produces homogeneously labeled 'clusters' at specified coordinates, consisting of a given number of points, each at a random offset referred to as \textit{spread}.  This is a convenient and flexible algorithm, since we can simulate messy, real-world data by generating overlapping clusters with large spread.  All examples in this module will use data generated in $\mathbb{R}^2$, but data can easily be generated for $\mathbb{R}^n$.
+
+\subsection*{Artificial Neurons}
+
+
+
+\subsection*{Perceptrons}
+
+The Perceptron was first introduced by Rosenblatt in the late 1950's \cite{rosenblatt} as a simple device that could be used to learn basic patterns in data, and then to recognize these patterns when presented with similar data.  The first Perceptrons were conceived as physical devices composed entirely of hardware, but due to considerable improvements in computing, they can now be easily implemented entirely with software.  Software implementations are highly preferable in many cases, due to their extensibility and scalability.
+
+From a purely mathematical perspective, a Perceptron is a self-contained unit that takes a vector of inputs and produces an output.  We often speak of an artificial neuron 'activating', by which we mean outputting a positive value in response to an input.  This output is dependent both on the inputs to the Perceptron, $x\in\mathbb{R}^n$, and on the weights of the Perceptron, $w\in\mathbb{R}^n$.  $w$ is a vector of the same cardinality as $x$, and is an integral part of the Perceptron model.  $w$ represents the Perceptron's learned knowledge of a pattern, and dictates how it classifies future inputs according to this pattern.  Each weight, or element of $w$, corresponds to an element of $x$.  When the Perceptron evaluates an input $x$, it multiplies each element of $x$ by its corresponding weight in $w$, then sums these products together.  This is the \textit{weighted sum}, represented as $net$.  Since $x$ and $w$ are vectors, $net$ can be described with the dot product,
+
+\begin{equation}
+net = x \cdot w + \theta ,
+\end{equation}
+
+where $\theta$ is the threshold weight, an additional weight that acts independently of an input.  $\theta$ can be thought of as defining the threshold at which the neuron will activate.  After the weighted sum is calculated, it is passed through an activation function $F(s)$ to obtain the output of the Perceptron.  Thus, the output $o$ of the Perceptron can be defined as
+
+\begin{equation}
+o(x) = F(x \cdot w + \theta )
+\end{equation}
+
+\begin{equation}
+o(x) = F(net) .
+\end{equation}
+
+Note that $net$ is a mostly superfluous intermediary for now, but it becomes useful in defining partial derivatives later.  In the case of the Perceptron, $F(s)$ is a slight modification of the sign function, specifically
+
+\begin{equation}
+F(s) = 
+\begin{cases}
+	-1 & s\leq 0 \\
+	1        & s>0
+\end{cases}
+\end{equation}
+
+\subsubsection*{Training}
+
+Training is the process by which the weights of the Perceptron are updated to more accurately detect a pattern.  This is accomplished with a set of training data, with each \textit{training example} $d\in(z, l)$.  $z\in\mathbb{R}^{n}$ is the input fed into the Perceptron, and $l$ is the \textit{label} of the training example.  The label is the expected output of the Perceptron, given $z$ as an input.
+
+Learning is accomplished with a simple algorithm.  Each element in a set of data is classified by the Perceptron, and for each incorrect classification, the weights are updated according to the rule:
+
+\begin{equation}
+w_j \leftarrow w_j + (l - o(z)) \cdot z_j \cdot \gamma
+\end{equation}
+
+This defines the update rule for a given element $d$ in the training set of data, for a specific weight $w_j$, and its associated input from the training example, $z_j$.  $\gamma$ is the learning rate, usually a very small value used to moderate the learning process.  This rule would be repeated over each weight and over each training element to achieve desirable results.
+
+\subsection*{Implementation}
+
+As mentioned above, with modern advances in computing, implementing a Perceptron with software is a fairly trivial task.  The below example is a simple class written in python designed to function as a Perceptron.  It contains the functions necessary for performing the two crucial tasks of a Perceptron, evaluating an input and learning from an input.
+
+The class uses the member variable \lstinline|weights| to track the vector $w$, and the constant \lstinline|LEARNING_RATE| as the rate at which weights are updated, often represented as $\gamma$.  Note that the class contains no variable for the threshold weight $\theta$.  This is because $\theta$ is considered to be index 0 of the \lstinline|weights| vector.
+
+\begin{lstlisting}[language = python]
+
+import numpy as np
+
+class Perceptron:
+  weights = [] # set of weights to be used in evaluating inputs
+  LEARNING_RATE = .1 # often expressed as gamma
+
+  def __init__(self, weights):
+    self.weights = weights
+
+  def evaluate(self, inputs):
+    # prepend a '1' on the beginning of inputs vector,
+    # corresponding with the threshold weight
+    inputs = np.insert(inputs, 0, [1]) 
+    sum = np.dot(self.weights, inputs)
+    return self.activation_function(sum)
+
+  def activation_function(self, input):
+    if input > 0:
+      return 1
+    else:
+      return -1
+
+  def learn(self, inputs, label):
+    inputs = np.insert(inputs, 0, [1])
+    sum = np.dot(self.weights, inputs)
+    if self.activation_function(sum) != label:
+      for i in range(0, self.weights.size):
+        self.weights[i] = (self.weights[i] + (label - sum) *
+                           inputs[i] * self.LEARNING_RATE)
+
+\end{lstlisting}
+
+In practice, the Perceptron is indeed capable of classifying sets of data, shown in the image below.
+
+\includegraphics[scale = .75]{perceptron_clean}
+
+\subsection*{Adaline}
+
+While the Perceptron model is useful for binary sets of data, where the label applied to each set of inputs can only hold one of two values, it fails to model sets of continuous data.  This is where the Adaline comes in.  The Adaline is very similar to the Perceptron, with one major difference being the activation function.  Instead of a stepwise activation function, Adalines use a continuously valued function, examples being linear and sigmoid.
+
+\subsubsection*{Activation Function}
+A number of options exist for a continuously valued activation function.  A simple approach is to use a linear activation function, which is to say, not modify the output in any way.  With this activation function, the output of the neuron would be:
+
+\begin{equation}
+o = x \cdot w + \theta
+\end{equation}
+
+While this method is simple, it is less valuable for classification tasks, since with classification we only deal with points having discrete values of 1 and -1.  In these cases, it is useful to have a function bounded at -1 and 1.  A class of functions known as sigmoids fit this description nicely, so we use one such function, tanh, which is defined as follows.
+
+\begin{equation}
+\sigma (x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+\end{equation}
+
+\subsubsection*{Gradient Descent}
+
+Another important development is that the Adaline model uses gradient descent to minimize error and learn the training set of data.  Gradient descent makes use of the continuous activation function, in this case  $\sigma$, as defined above.
+
+\begin{equation}
+E_i(\theta ,w) = \frac{1}{2}(\sigma (\theta + w \cdot x_i) - l)^2
+\end{equation}
+
+This defines the error $E_i$ for a single set of inputs $x_i$, where $l$ represents the label, or desired output associated with $x_i$.  Furthermore, the total error of the neural network over the entire training set can be found by summing each individual error.
+
+\begin{equation}
+E = \sum_{i}^{N} E_i(\theta ,w)
+\end{equation}
+
+Thus, our problem of training weights can be defined as an optimization problem, where we try to minimize $E$.  In order to perform gradient descent on the error function, we must first find its derivative.  First note that since we seek to use an iterative algorithm to update weights, it is more useful to define the derivative of $E_i$.  We then compute the partial derivative with respect to each weight in $w$.
+
+\begin{equation}
+\begin{split}
+\frac{\partial E_i}{\partial w_j} & = \frac{\partial }{\partial w_j} \Big[\frac{1}{2}(\sigma (\theta + w \cdot x_i) - l_i)^2 \Big] \\
+ & = (\sigma (\theta + w \cdot x_i) - l_i)(\sigma '(\theta + w \cdot x_i)) \cdot x_{i_j}
+\end{split}
+\end{equation}
+
+Observe that the notation ${x_{i_j}}$ refers to the j-th element of the vector $x_i$, i.e. the input corresponding with the weight $w_j$.  Using this definition, we can then obtain a weight adjustment to use in our algorithm.
+
+\begin{equation}
+\delta = (l - \sigma (\theta + w \cdot x_i))(\sigma '(\theta + w \cdot x_i))
+\end{equation}
+
+Thus, our update rule becomes:
+
+\begin{equation}
+w_i \leftarrow w_i + \gamma \cdot \delta \cdot x_{i_j}
+\end{equation}
+
+With this update rule, we design an algorithm to train our weights to a particular set of training data.
+
+\begin{enumerate}
+	\item Select a member from our set of data, either sequentially or randomly.
+	\item Execute the update rule for each weight in $w$.
+	\item Repeat this process over the entire set of training data.
+\end{enumerate}
+
+This process can be repeated multiple times over the same training data to train weights further if desired.
+
+\subsubsection*{Advantages}
+
+As discussed above, one of the major advantages of Adalines over Perceptrons is the ability to process continously valued data, as opposed to sets labeled at -1 and 1.  Another major advantage of Adalines is robustness when faced with messy data.  In such sets, where linear separation is not possible, a useful if not completely accurate classification can be performed.  The diagram below demonstrates an Adaline attempting to classify one such messy set.
+
+\includegraphics[scale = .75]{adaline_messy}
+
+\subsubsection*{Limitations}
+
+While single layer neural networks are somewhat useful in solving a limited class of problems, there exists a great variety of problems, classification and otherwise, unsolvable with single layer networks.  The primary weakness of the single layer approach is that these models are inherently limited to linear separations.  If data is not linearly separable, meaning that a line separating two differently labeled sets does not exist, single layer networks cannot produce a rigorous solution.
+
+This issue is perhaps best demonstrated by what is known as the \textit{xor problem}:
+
+\includegraphics[scale = .75]{xor}
+
+This is referred to as the xor problem since both inputs being positive and both inputs being negative are associated with one classification, and one positive and the other negative associated with another classification.  This closely mirrors the behavior of the standard xor bitwise operator.
+
+Clearly, there is no linear rule that we can use to classify these two sets of data, and thus is unsolvable with the Perceptron and Adaline.
+
+\section*{Artificial Neural Networks}
+
+Artificial nerual networks (ANNs) are currently a particularly active area of machine learning research.  Since multi-layer neural networks serve as the basis of more advanced neural networks such as convolutional and recurrent networks, having a solid foundation with these networks is critical to building more complex forms \cite{wu}.  Additionally, multi-layer networks serve as a convenient bridge from basic topics of single-unit neurons like the Adaline to more involved applications.
+
+Multi-layer neural networks are of specific interest to us because they act as universal function approximators, meaning that they are capable of approximating any function with arbitrary accuracy, given sufficient neurons.
+
+\subsection*{Network Topology}
+
+Within this module, we will use a simple network topology in the interest of producing a network that is easy to understand and train.  The topology will consist of an input layer, a single hidden layer, and an output layer.
+
+\includegraphics[scale = .6]{multilayer.png}
+
+Each of the nodes in our graph represent a neuron, where edges demonstrate the outputs of neurons feeding into the inputs of those in the next layer.  Our input layer is simply a means of diffusing inputs to all neurons in the hidden layer, no computation happens in this layer.  Specifically, for each layer, every neuron's output will become an input of every neuron in the next layer.  This is what is refered to as a \textit{fully connected} network \cite{mitchell}.
+
+This is also a good place to introduce the concepts of \textit{upstream} and \textit{downstream}.  For any given neuron in a network, the set of upstream neurons will consist of all input neurons to the given neuron.  Likewise, downstream neurons will be the set of neurons that use our given neuron as an input.  For a fully connected network, this means that for all neurons in a given layer, the upstream neurons should consist of the previous layer, and the downstream neurons will consist of the next layer.
+
+\subsection*{Evaluation}
+
+The primary function of a neural network is to take inputs, often refered to as training examples, and produce an output.  This is know as the \textit{feed-forward} process, since it starts at the input layer, feeds into the next layer, and continues as it propagates forwards to the output layer.  Evaluating training examples is critical to training weights, since this requires error to be computed with the difference between the actual and expected output of the network.
+
+\subsection*{Learning}
+
+The task of training a neural network on an input involves three basic steps:
+
+\begin{enumerate}
+	\item{Feeding the inputs forward and obtaining the resulting output}
+	\item{Back-propagating the error in the network to all neurons}
+	\item{Updating the weights of each neuron based on the error in each neuron}
+\end{enumerate}
+
+\subsubsection*{Error}
+
+Optimizing the weights of a complex network may seem like a daunting task at first, but by defining an error function for our network and then trying to minimize this function, we have posed the problem of training weights as an optimization problem, for which we will use gradient descent.  Note that the error, $E$, is a function of all weights in the network, and that by performing gradient descent on this function we can converge onto the optimal values for each weight.
+
+\begin{equation}
+E_{kd} = \frac{1}{2} (t_{kd} - o_{kd})^2
+\end{equation}
+
+Note that this only gives the error for some training example $d$ and for some output neuron $k$, where $t_{kd}$ is the target output of the network defined by $d$, and $o_{kd}$ is the actual output of the network.  If instead we want the error of the entire network for some training example $d$, we get:
+
+\begin{equation}
+E_{d} = \frac{1}{2} \sum_{k \in outputs} (t_{kd} - o_{kd})^2
+\end{equation}
+
+\subsubsection*{Backpropagation}
+
+Backpropagation is the second step of the learning process, where error is propagated backwards through the network and weights are updated.  As mentioned above, this is posed as an optimization problem, where we use the gradient descent algorithm to minimize $E_d$.
+
+At this point we introduce some more specific notation to deal with specific neurons in a network.  For a neuron $j$, $x_{ji}$ refers to the input from $i$ to $j$, and $w_{ji}$ refers to the corresponding weight.  $Downstream(j)$ is the set of all downstream neurons of $j$.
+
+Gradient descent requires finding the partial derivative of error with respect to each weight, $\frac{\partial E_d}{\partial w_{ji}}$.  The chain rule then gives us
+
+\begin{equation}
+\begin{split}
+\frac{\partial E_d}{\partial w_{ji}} & = \frac{\partial E_d}{\partial net_j} \frac{\partial net_j}{\partial w_{ji}} \\
+& = \frac{\partial E_d}{\partial net_j} x_{ji}
+\end{split}
+\end{equation}
+
+The problem has then been reduced to finding the partial of error with respect to $net_j$.
+
+\begin{equation}
+\begin{split}
+\frac{\partial E_d}{\partial net_j} & = \sum_{k \in Downstream(j)} \frac{\partial E_d}{\partial net_k} \frac{\partial net_k}{\partial net_j} \\
+& = \sum_{k \in Downstream(j)} -\delta_k \frac{\partial net_k}{\partial net_j} \\
+& = \sum_{k \in Downstream(j)} -\delta_k \frac{\partial net_k}{\partial o_j} \frac{\partial o_j}{\partial net_j} \\
+& = \sum_{k \in Downstream(j)} -\delta_k w_{kj} \sigma '(net_j)
+\end{split}
+\end{equation}
+
+Then, using $\delta_j$ to represent $\frac{\partial E_d}{\partial net_j}$, we get
+
+\begin{equation}
+\delta_j = \sigma '(net_j) \sum_{k \in Downstream(j)} \delta_k \dot w_{k_j}
+\end{equation}
+
+Given this definition of $\delta_j$, the update rule for $w_{ji}$ becomes:
+
+\begin{equation}
+w_{ji} \leftarrow w_{ji} + \gamma \delta_j x_{ji}
+\end{equation}
+
+In this equation, $\gamma$ is our learning rate, usually a small value such as .1
+
+\subsection*{Results}
+
+To test our learning algorithm, we can generate an easily visualized classification problems using two inputs, $x_1$ and $x_2$.  Training examples belonging to one category will have an expected output of 1, and examples belonging to the other category will have an expected output of -1.
+
+Since we have 2 inputs, the network should have 2 neurons in its input layer, and with 2 possible classifications, only 1 neuron is needed in the output layer.  The number of neurons required in the hidden layer depends on the complexity of the pattern to be fit, and 4 is used for these results.
+
+This is a visualization of a classification learned by the described network on the xor problem:
+
+\includegraphics[scale = .6]{xor.png}
+
+Here, the red dots represent training examples in the positive category (expected output = 1) and blue dots represent examples in the negative category (expected output = -1).  The black lines shown are the contour of the function produced by the network where $f = 0$.  More abstractly, this line represents the separation created by the network between different categories of training examples.
+
+A more complex example using the same principles can be seen below.
+
+\includegraphics[scale = .6]{complex.png}
+
+\section*{Network Topology}
+
+Artificial neural networks (ANNs) are currently a particularly active area of machine learning research.  The internal structuring of the neurons within the network, known as the network \textit{topology} is an important topic to fully comprehend, since both the representational power and the learning capacity of a network are influenced by topology.
+
+\subsection*{Arbitrary Topology}
+
+Since neural networks are a network-based computational model, it follows that a graph is a convenient way to model a neural network.  In these representations, a vertex represents a neuron and an edge represents information flow from one neuron to another.  The information transfers here are the output of one neuron acting as an input of another.  Since information is only ever transmitted in one direction from one neuron to another, we draw these edges as being directed from the neuron sending information to the neuron receiving information, and thus our graph is a directed graph or \textit{digraph}.  Defining our neural network in terms of a digraph is very useful, since this is inherently a very flexible model, and we may wish to describe many different types of network.
+
+While we do want to maintain the flexibility of our model, a few restraints must be imposed to ensure a workable network.  The most important of these is that the digraph must be \textit{acyclic}, meaning that it must not contain any directed loops.  This is a constraint common to all feed-forward networks, since a directed loop would result in a closed chain of neuron inputs that would be irresolvable.  Additionally, many models call for an additional restriction of layers.  Layers here are defined as a set of vertices, unrelated to each other in the set.  Layer-based models typically consist of a specifically ordered series of layers, where connections exist only between vertices of adjacent layers, and where the direction of these connections is always from the preceding layer to the following layer.  Applying this concept to neural networks, we can see layers as containing sets of neurons.  Moreover, each neuron's inputs should consist entirely of outputs of neurons belonging to the previous layer.  If every possible connection is made between all layers, then the network is considered \textit{fully connected}.  This image demonstrates a typical feed-forward, fully connected network with three layers:
+
+\includegraphics[scale = .57]{multilayer.png}
+
+While the constraint of layers is certainly useful from an organizational standpoint, some flexibility is certainly lost.  Some applications call for connections within a layer, and others call for connections between non-adjacent layers.  If enough of these mutations are employed, it becomes clear that the abstraction of layers is no longer accurate or helpful.  It is important to remember that, as long as a network is acyclic, it is a valid feed-forward network, and can be simulated as such.
+
+\subsection*{Terminology}
+
+To better discuss the intricacies of these systems, we introduce some additional terminology.  For any given vertex $v$, we will refer to the set of \textit{upstream} vertices with respect to $v$, $upstream(v)$, as the vertices directly connected to $v$ in the direction of $v$.  Likewise, the set of downstream vertices with respect to $v$, also represented as $downstream(v)$, consists of the vertices directly connected to $v$ where these connections are directed away from $v$.
+
+As these concepts apply in neural networks, the upstream neurons for any neuron $n$ will be the inputs of $n$, and the downstream neurons of $n$ are the neurons that use the output of $n$ as an input.
+
+\subsection*{Implementation}
+
+One of the main priorities with our implementation is to achieve the simplest and most efficient solution possible, while still preserving as much flexibility and modularity as possible.  The implementation makes most use of two classes, Network and Neuron.  Neuron carries out the function of a single neuron, taking inputs, calculating outputs, calculating error, and adjusting weights accordingly.  Network is the overarching class used to construct and activate the network.  A key implementation choice is the emphasis on Neuron-centric function -- almost all of the actual execution of the network's function is carried out at the Neuron level.  In this sense, the Network class can be thought of as a wrapper or level of abstraction surrounding our neural network.
+
+As discussed above, while the restriction of layers is a common convention, it is by no means integral to the function of a feed-forward network, and because of this, our implementation of a neural network eschews any notion of a layer beyond initial construction.  That is, while the Network class uses layers as a slight crutch in constructing the network, the actual function of the network is totally devoid of them.  Instead, each neuron has all of the information it needs to function, independent of any larger structure beyond the basic framework provided by the Network class.
+
+\subsubsection*{Neuron}
+
+At all times, Neuron will keep track of all of its upstream and downstream neurons.  Each neuron must know what its upstream neurons are to receive input during feed-forward operations, and likewise must know its downstream neurons since its error is based on downstream neurons.  The neuron also keeps track of its weights, and can update them accordingly during backpropagation.
+
+\subsubsection*{Network}
+
+The Network class serves two primary functions.  First, it constructs the network, which entails initializing each neuron and setting all of the connections between neurons.  Second, it activates the network and returns the results when its functions \textbf{evaluate} and \textbf{learn} are called.  This distilled version of a network is critical to its modularity and extensibility.  Many more complex network topologies can be implemented using this class as a basis.
+
+\section*{Convolutional Neural Networks}
+
+Convolutional Neural Networks(CNNs) are a specialized form of Artificial Neural Network that have gained considerable popularity recently with such signal processing tasks as image classification.  CNNs work by limiting connections in the network to elements that are spatially near.  This approach focuses on the patterns between adjacent and nearby pixels, and as such is able to both save on computation and to more generally apply learned concepts to rearranged images.  Pooling layers allow the network to detect patterns on a larger scale as well.  This combination of ability to detect patterns at macro- and micro- scales lends CNNs tremendous accuracy when classifying images.
+
+\subsection*{Network Architecture}
+
+A Convolutional Neural Network consists of a series of layers, with the output of one layer becoming the input to its successor.  The first layer receives its inputs from the data being processed, in this case an image, and the last layer's outputs are the network's classification of the network input.  The types of layer employed are:
+
+\begin{itemize}
+	\item Convolution Layers
+	\item ReLU Layers
+	\item Pooling Layers
+	\item Fully Connected Layers
+\end{itemize}
+
+Each of these layers is discussed in further detail later.
+
+\subsection*{Network Parameters}
+
+It is important to note that a Convolutional Neural Network is dependent on many parameters that dictate the behavior of the network at multiple levels.  Network parameters fall into two broad categories, \textit{learned} and \textit{unlearned}.  Learned parameters, such convolution kernels, are updated during each backpropogation process, and represent the network's learned knowledge of a classification problem.  On the other hand, unlearned parameters, hereafter referred to as \textit{hyperparameters}, are not learned in any way by the network, but rather are externally defined (i.e. by the researcher) during the design of the network, before learning begins.  An example of a hyperparameter is \textit{stride}, which applies to multiple types of layer in similar fashion.  In a convolution layer, stride dictates the offset between convolutions.  The hyperparameters of each layer will be discussed in turn.
+
+\subsection*{Backpropogation}
+
+A basic understanding of backpropogation for multilayer networks is expected in this paper.  Error of a singular output neuron $k$ is defined as
+
+\begin{equation}
+E_{kd} = \frac{1}{2} (t_{kd} - o_{kd})^2,
+\end{equation}
+
+where $d$ is the given training example for which error is being defined, $t_{kd}$ is the target, or expected output for $d$, and $o_{kd}$ is the actual output of $k$ for training example $d$.  Thus the total error in the network will be:
+
+\begin{equation}
+E_{d} = \frac{1}{2} \sum_{k \in outputs} (t_{kd} - o_{kd})^2.
+\end{equation}
+
+$E_{d}$ will be frequently used later in discussions of backpropogation for various types of layer.  Specifically, $\frac{\partial E_{d}}{\partial x}$, or the partial derivative of error with respect to some value $x$ is generally used to denote what is referred to as the 'error in' $x$, or alternatively $\delta_x$.
+
+\subsection*{Convolution Layers}
+
+Convolution layers are the primary workhorse of CNNs.  They operate by performing a series of convolutions over an input tensor.  Convolution is a process that takes a convolution kernel and overlaps it with the input at every possible position.  With each overlap, each element between the kernel and input is multiplied, and the sum of these products is mapped to the output.  The process is illustrated below:
+
+\includegraphics[scale=.5]{convolution.png}
+
+This example demonstrates a 2x2 convolution kernel, also known as a mask, used in a convolution with a 3x4 matrix to produce a 2x3 output.
+
+Typically, one convolution layer will contain multiple kernels, each of which perform their own convolution.  If we constrain these kernels to all being the same size, all of their outputs will also be the same size.  This allows us to stack the outputs together to form a third-order tensor, such that the final output of the layer will take this form.
+
+\subsection*{ReLU Layers}
+
+A ReLU (Rectified Linear Unit) Layer maps the ReLU function individually to each element of the input tensor.  It does this on a one-to-one basis, implying that the output is of the same size and dimensionality as its input.  The output $y$ of a ReLU unit, where $x$ is the input and $i$, $j$, and $k$ are the position of some element, will be
+
+\begin{equation}
+y_{i,j,k} = max\{0, x_{i,j,k}\}
+\end{equation}
+
+To see this in action, observe this process with a sample matrix $A \in R^{H \times W}$  Also note that this process functions equivalently for third-order tensors, but is demonstrated with second-order tensors (matrices) here for brevity.
+
+\begin{equation}
+\left[ {\begin{array}{cccc}
+3 & -2 & 1 & 4\\
+0 & 4 & -1 & 6\\
+-4 & 1 & -3 & 1\\
+\end{array} } \right]
+\rightarrow
+\left[ {\begin{array}{cccc}
+3 & 0 & 1 & 4\\
+0 & 4 & 0 & 6\\
+0 & 1 & 0 & 1\\
+\end{array} } \right]
+\end{equation}
+
+\subsubsection*{Motivation behind ReLU layers}
+
+One of the primary goals prompting with the use of ReLU layers is the introduction of nonlinearity in the CNN.  Since we aim to classify data in the form of images that are inherently nonlinear (e.g. features in a human face), it follows that expressing nonlinear patterns is an important capacity for CNNs\cite{wu}.  While the ReLU function is very simple, it nonetheless an effective way of inducing nonlinearity.
+
+\subsubsection*{Backpropagation with ReLU}
+
+ReLU layers depend on no parameters, learned or otherwise, thus backpropogation for ReLU layers consists of passing error backwards to the previous layer.  A nice attribute of the ReLU function is its trivial derivative.  The derivative of ReLU is 0 for all inputs less than 0, and 1 for all values greater than 0.  In terms of gradient descent, this sets sets the gradient to 0 for all non-activated features, and does not alter it for activated features\cite{wu}.  In more concrete terms, the partial of error with respect to some element of the input is defined as:
+
+\begin{equation}
+\frac{\partial E}{\partial x_{i,j,k}} = 
+\begin{cases}
+\frac{\partial E}{\partial y_{i,j,k}} & x > 0\\
+\hspace{.35cm}0 & x < 0
+\end{cases}
+\end{equation}
+
+\subsection*{Pooling Layers}
+
+Pooling is a process that involves partitioning a tensor into many uniformly shaped segments, then producing a new tensor based on the aggregation of some attribute of each partition.  A common strategy, \textit{Max Pooling}, uses the largest value in the partition as the output value of that partition.
+
+\includegraphics{max-pooling.png}
+
+Pooling layers depend on no learned parameters, but they do depend on several hyperparameters\cite{stanford}.
+
+\begin{itemize}
+	\item Spatial Extent, $F$, referring to the dimensions of the partitions used.
+	\item Stride, $S$, indicating the offset between partitions.
+\end{itemize}
+
+The example above uses $S=2$ and $F=2$, a very common parameterization.  $F$ usually has a small value, since larger values are often too destructive\cite{stanford}.
+
+Pooling allows us a number of advantages.  First, it drastically reduces the size of the tensor it works with.  In the above example, the output of the Pooling layer was half the width and half the length of the input, effectively removing three quarters of the present elements, and larger strides would further reduce the size of the output.  The reduction of elements is important because it reduces the number of computations, lending a boost in performance.
+
+Backpropagation with Max Pooling is a very simple process, since it simply involves assigning the error associated with the output to the input that was mapped to the output.
+
+\subsection*{Fully Connected Layers}
+
+It is commonplace for Convolutional Neural Networks to employ conventional fully connected layers of neurons.  These layers usually come at the end of the network, with the intent of using the patterns discovered in previous convolution and pooling layers to generate classifications.
+
+\section*{Applications}
+
+Neural networks have a promisingly wide variety and depth of applications.  Due to their incredible flexibility and capacity to universally approximate functions, neural networks can be used to solve many problems across many fields.  Sometimes, the more generalized fully-connected network can be applied directly to a problem, but often specialized forms of neural networks can be designed to more specifically meet the needs of a problem.  Here we discuss two such applications, time series analysis and image classification.
+
+\subsection*{Time Series Analysis}
+
+A time series can be thought of as chronological set of data points, indexed by time.  In more formal terms, a time series is a sequence of vectors,
+
+\begin{equation}
+\vec{s}(t), t = 0, 1,...,
+\end{equation}
+
+where each value of $\vec{s}$ represents some observable variable at the given time $t$.  For example, a meteorological time series might include temperature, humidity, and pressure in $\vec{s}$.  From this perspective, we can see that many processes can be modeled as time series, such as stock market closing prices or water consumption in a given community.  Neural Networks can be trained to perform a number of tasks with time series, such as classification of behavior, but we will specifically focus on forecasting future values of the series.
+
+While $\vec{s}$ does often represent a continuously defined function of $t$, it is often more practical within the context of neural networks to instead take $\vec{s}$ as a set of \textit{samples} of the observable variables being tracked, taken at regular intervals.  We can then iterate over the series, and have our network predict $\vec{s}$ using some number of previous values, $n$, from our series.  This allows the neural network to take into account the history of the series, and to detect patterns that may affect future outcomes.
+
+\subsubsection*{Data}
+
+We will be training on several types of time series, both real-world and simulated.  A sine wave here acts as a simulated time series, for several reasons.  First, sine waves are cyclic functions, making them similar to many practical patterns we may want to analyze or predict, such as weather patterns.  Second, sine waves are very predictable and understood, such that any anomalies in neural network predictions are certainly the fault of the network itself and not due to unusual data.  To draw on the notation earlier employed, this would have
+	
+\begin{equation}
+s(t) = sin(t).
+\end{equation}	
+	
+Note that in this context we no longer represent $s$ as a vector, since the time series described here only consists of one value at any given point in time.  The training set of data was generated with $0 \leq t \leq 10$, sampled at regular .05 intervals.  The validation set was generated using the same process, from $10 \leq t \leq 20$.  Training examples can be thought of as tuples in the form of $(\vec{x}, l)$, where $l$ is the \textit{label}, or current value of the training example, and the vector $\vec{x}$ holds the $n$ preceding values in the series.  Thus, the inputs to the network will be $\vec{x}$, and the expected output, used in training, is $l$.  In our case, training examples consist of 5 samples, meaning all networks used to predict this series will take 5 inputs.
+
+\subsubsection*{Network Topology}
+
+A number of network topologies are used here in the interest of better understanding which techniques and approaches are more accurate or more efficient.  The first, simplest approach is to use a fully connected topology with one hidden layer, in this case containing 5 neurons.
+
+\includegraphics[scale=.7]{fully-connected.png}
+
+A more nuanced approach would be to take into account the chronological nature of the data in a time series.  By arranging an alternate topology where data flows from older to newer points of data, we can intuitively embody this idea.
+
+\includegraphics[scale=.5]{triangular.png}
+
+Note also that this layout provides a 'deeper' network, with more neurons between the inputs and outputs, resulting in better ability to represent more nuanced patterns.  This model can be extended to any number of inputs by adding additional columns of neurons to the left, each one with one more neuron than the last.
+
+\subsubsection*{Results}
+
+Both networks were fairly proficient in predicting the validation set.  Each was trained for 1000 epochs over the training set of 38 examples.  The graphs below show the approximations produced from the validation set, along with its actual value (the sine wave).  The first is the fully connected network, followed by the triangular network.
+
+\includegraphics[scale=.7]{triangular-network-approximation.png}
+
+\includegraphics[scale=.7]{fully-connected-approximation.png}
+
+One of the most evident issues with these approximations is their failure to reach the peaks and troughs of the function.  This is largely due to the choice of activation function, tanh.  Since $tanh(x)$ asymptotically approaches 1 as $x$ approaches infinity, and -1 as $x$ approaches negative infinity, the output of the network can never be 1 or -1, and will struggle to approach these values.
+
+\printbibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
